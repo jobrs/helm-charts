@@ -4,6 +4,7 @@ metadata:
   name: backup-etcd
   namespace: backup
 spec:
+  replicas: 1
   template:
     metadata:
       labels:
@@ -12,14 +13,13 @@ spec:
         heritage: "{{ .Release.Service }}"
       annotations:
         scheduler.alpha.kubernetes.io/tolerations: '[{"key":"species","value":"master"}]'
-{{if .Values.metrics_enabled}}
+{{- if .Values.metrics_enabled}}
         prometheus.io/scrape: "true"
         prometheus.io/port: {{.Values.metrics_port | quote }}
-{{endif}}
+{{- end}}
     spec:
-      replicas: 1
       nodeSelector:
-        species: master
+          species: master
       containers:
       - name: backup-etcd
         image: {{.Values.repository}}:{{.Values.image_version}}
@@ -31,13 +31,9 @@ spec:
             name: etcd-volume
         env:
         - name: MY_POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
+          value: backup-etcd
         - name: MY_POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
+          value: {{.Release.Namespace}}
         - name: OS_AUTH_URL
           value: {{.Values.backup_os_auth_url}}
         - name: OS_AUTH_VERSION
@@ -58,11 +54,11 @@ spec:
           value: {{.Values.backup_interval | quote }}
         - name: BACKUP_EXPIRATION_AFTER
           value: {{.Values.backup_expire_after | quote }}
-{{if .Values.metrics_enabled}}
+{{- if .Values.metrics_enabled}}
         ports:
         - name: metrics
           containerPort: {{.Values.metrics_port | quote }}
-{{endif}}
+{{- end}}
       volumes:
       - name: etcd-volume
         hostPath:

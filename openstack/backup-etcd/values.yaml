@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 repository: sapcc/backup-etcd
-image_version: v0.0.1
+image_version: v0.0.17
 
 # Enable metric data
 metrics_enabled: false
