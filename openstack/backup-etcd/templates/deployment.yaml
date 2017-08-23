@@ -1,14 +1,15 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: backup-etcd
+  name: {{ template "fullname" . }}
   namespace: backup
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: backup-etcd
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: "{{ .Release.Name }}"
         heritage: "{{ .Release.Service }}"
       annotations:
@@ -18,8 +19,10 @@ spec:
         prometheus.io/port: {{.Values.metrics_port | quote }}
 {{- end}}
     spec:
+      selector:
+        app: {{ template "fullname" . }}
       nodeSelector:
-          species: master
+        species: master
       containers:
       - name: backup-etcd
         image: {{.Values.repository}}:{{.Values.image_version}}
