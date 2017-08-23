@@ -1,14 +1,17 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "fullname" . }}
+  name: backup-etcd
   namespace: backup
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: backup-etcd
   template:
     metadata:
       labels:
-        app: {{ template "fullname" . }}
+        app: backup-etcd
         chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: "{{ .Release.Name }}"
         heritage: "{{ .Release.Service }}"
@@ -16,11 +19,9 @@ spec:
         scheduler.alpha.kubernetes.io/tolerations: '[{"key":"species","value":"master"}]'
 {{- if .Values.metrics_enabled}}
         prometheus.io/scrape: "true"
-        prometheus.io/port: {{.Values.metrics_port | quote }}
+        prometheus.io/port: {{.Values.metrics_port | quote}}
 {{- end}}
     spec:
-      selector:
-        app: {{ template "fullname" . }}
       nodeSelector:
         species: master
       containers:
@@ -57,10 +58,13 @@ spec:
           value: {{.Values.backup_interval | quote }}
         - name: BACKUP_EXPIRATION_AFTER
           value: {{.Values.backup_expire_after | quote }}
+        - name: BACKUP_METRICS_PORT
+          value: {{.Values.metrics_port | quote }}
 {{- if .Values.metrics_enabled}}
         ports:
         - name: metrics
-          containerPort: {{.Values.metrics_port | quote }}
+          containerPort: {{.Values.metrics_port}}
+          protocol: TCP
 {{- end}}
       volumes:
       - name: etcd-volume
