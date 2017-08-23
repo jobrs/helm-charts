@@ -29,42 +29,41 @@ spec:
         image: {{.Values.repository}}:{{.Values.image_version}}
         imagePullPolicy: IfNotPresent
         command:
-        - "/bin/backup-etcd"
+          - "/bin/backup-etcd"
         volumeMounts:
           - mountPath: /var/lib/etcd2
             name: etcd-volume
         env:
-        - name: MY_POD_NAME
-          value: backup-etcd
-        - name: MY_POD_NAMESPACE
-          value: {{.Release.Namespace}}
-        - name: OS_AUTH_URL
-          value: {{.Values.backup_os_auth_url}}
-        - name: OS_AUTH_VERSION
-          value: "3"
-        - name: OS_USERNAME
-          value: {{.Values.backup_os_username}}
-        - name: OS_USER_DOMAIN_NAME
-          value: {{.Values.backup_os_user_domain}}
-        - name: OS_PROJECT_NAME
-          value: {{.Values.backup_os_project_name}}
-        - name: OS_PROJECT_DOMAIN_NAME
-          value: {{.Values.backup_os_project_domain}}
-        - name: OS_REGION_NAME
-          value: {{.Values.backup_os_region_name}}
-        - name: OS_PASSWORD
-          value: {{.Values.backup_os_password | quote}}
-        - name: BACKUP_INTERVAL
-          value: {{.Values.backup_interval | quote }}
-        - name: BACKUP_EXPIRATION_AFTER
-          value: {{.Values.backup_expire_after | quote }}
-        - name: BACKUP_METRICS_PORT
-          value: {{.Values.metrics_port | quote }}
+          - name: MY_POD_NAME
+            value: backup-etcd
+          - name: MY_POD_NAMESPACE
+            value: {{.Release.Namespace}}
+          - name: OS_AUTH_URL
+            value: {{.Values.backup_os_auth_url}}
+          - name: OS_AUTH_VERSION
+            value: "3"
+          - name: OS_USERNAME
+            value: {{.Values.backup_os_username}}
+          - name: OS_USER_DOMAIN_NAME
+            value: {{.Values.backup_os_user_domain}}
+          - name: OS_PROJECT_NAME
+            value: {{.Values.backup_os_project_name}}
+          - name: OS_PROJECT_DOMAIN_NAME
+            value: {{.Values.backup_os_project_domain}}
+          - name: OS_REGION_NAME
+            value: {{.Values.backup_os_region_name}}
+          - name: OS_PASSWORD
+            value: {{.Values.backup_os_password | quote}}
+          - name: BACKUP_INTERVAL
+            value: {{.Values.backup_interval | quote }}
+          - name: BACKUP_EXPIRATION_AFTER
+            value: {{.Values.backup_expire_after | quote }}
+          - name: BACKUP_METRICS_PORT
+            value: {{.Values.metrics_port | quote }}
 {{- if .Values.metrics_enabled}}
         ports:
-        - name: metrics
-          containerPort: {{.Values.metrics_port}}
-          protocol: TCP
+          - name: metrics
+            containerPort: {{.Values.metrics_port}}
 {{- end}}
       volumes:
       - name: etcd-volume
